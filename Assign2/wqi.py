@@ -8,9 +8,38 @@ def q1(attr):
     nitrates=0.10
     fecalcol =0.16
     # assuming we have q normalized values
-    print(attr["ph"],attr["temp"],attr["turb"],attr["tdv"],attr["nitrates"],attr["fecalcol"])
-    wqi = ph*attr["ph"]+temp*attr["temp"]+turb*attr["turb"]+tdv*attr["tdv"]+nitrates*attr["nitrates"]+fecalcol*attr["fecalcol"]
-    wqi = wqi/(ph+temp+turb+tdv+nitrates+fecalcol)
+    # print(attr["ph"],attr["temp"],attr["turb"],attr["tdv"],attr["nitrates"],attr["fecalcol"])
+
+    denom = 0
+    num = 0
+    if "ph" in attr:
+        num+= ph*attr["ph"]
+        denom+=ph
+    
+    if "turb" in attr:
+        num+= turb*attr["turb"]
+        denom+=turb
+    
+    if "tdv" in attr:
+        num+= tdv*attr["tdv"]
+        denom+=tdv
+    
+    if "nitrates" in attr:
+        num+= nitrates*attr["nitrates"]
+        denom+=nitrates
+    
+    if "temp" in attr:
+        num+= temp*attr["temp"]
+        denom+=temp
+    
+    if "fecalcol" in attr:
+        num+= fecalcol*attr["fecalcol"]
+        denom+=fecalcol
+    
+    if denom==0:
+        return -1
+    
+    wqi = num/denom
 
     return wqi
 
