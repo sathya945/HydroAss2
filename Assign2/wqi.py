@@ -179,6 +179,8 @@ def q2(attr):
     wqi=0
     for i in param_vals:
         wqi+=i
+    if cnt==0:
+        return -1
     
     wqi/=cnt
 
