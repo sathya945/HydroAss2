@@ -12,13 +12,14 @@ tabControl = ttk.Notebook(root)
 tab1 = ttk.Frame(tabControl) 
 tab2 = ttk.Frame(tabControl) 
 tab3 = ttk.Frame(tabControl) 
-tabControl.add(tab1, text ='Tab 1') 
-tabControl.add(tab2, text ='Tab 2') 
-tabControl.add(tab3, text ='Tab 3') 
+tabControl.add(tab1, text ='TASK 1') 
+tabControl.add(tab2, text ='TASK 2') 
+tabControl.add(tab3, text ='TASK 3') 
 
 tabControl.pack(expand = 1, fill ="both") 
 
 csv =None
+csv_q2 = None
 
 def add_tab1(tab1):
 	tk.Label(tab1, text="pH").grid(row=0)
@@ -34,6 +35,7 @@ def add_tab1(tab1):
 	e4 = tk.Entry(tab1)
 	e5 = tk.Entry(tab1)
 	e6 = tk.Entry(tab1)
+	e7 = tk.Entry(tab1)
 	
 	
 	e1.grid(row=0, column=2)
@@ -42,14 +44,16 @@ def add_tab1(tab1):
 	e4.grid(row=3, column=2)
 	e5.grid(row=4, column=2)
 	e6.grid(row=5, column=2)
+	e7.grid(row=7, column=2)
 
 	def open_file():
 		file = filedialog.askopenfilename(title = "choose your file",filetypes =[('csv files','*.csv')])
 		global csv 
-		csv = pd.read_csv(file,header = None)
+		csv = pd.read_csv(file)
 
 	btn = Button(tab1, text ='Choose file', command = lambda:open_file()) 
 	btn.grid(row=6,column=1)
+	tk.Label(tab1, text="Output File Name").grid(row=7)
 
 
 	def show_entry_fields():
@@ -58,12 +62,18 @@ def add_tab1(tab1):
 			tk.Label(tab1,text=qual_ind).grid(row=0,column=4)
 		except:
 			print("pls fill values")
+		
+		qual_ind_vec = []
 		if csv is not None:
 			for i in range(len(csv)) : 
 				print(csv.iloc[i, 0], csv.iloc[i, 2]) 
 				qual_ind = wqi.q1_main(csv.iloc[i, 0],csv.iloc[i, 1],csv.iloc[i, 2],csv.iloc[i, 3],csv.iloc[i, 4],csv.iloc[i, 5])
-				tk.Label(tab1,text=qual_ind).grid(row=i,column=7)
-
+				# tk.Label(tab1,text=qual_ind).grid(row=i,column=7)
+				qual_ind_vec.append(qual_ind)
+		
+			csv["WQI"] = qual_ind_vec
+			outputfname = e7.get()
+			csv.to_csv(outputfname, index=False)
 
 	tk.Button(tab1, 
 			  text='Quit', 
@@ -89,21 +99,47 @@ def add_tab2(tab2):
 	for i,et in enumerate(ets):
 		et.grid(row=i, column=2)
 	
+	ets.append(tk.Entry(tab2))
+	ets[-1].grid(row=14, column=1)
+	# ets.grid(row=14, column=1)
+
+	def open_file():
+		file = filedialog.askopenfilename(title = "choose your file",filetypes =[('csv files','*.csv')])
+		global csv_q2
+		csv_q2 = pd.read_csv(file)
+		# print(csv_q2.head())
+
+	btn = Button(tab2, text ='Choose file', command = lambda:open_file()) 
+	btn.grid(row=13,column=1)
+	tk.Label(tab2, text="Output File Name").grid(row=14)
 
 	def show_entry_fields():
-		params = [float(i.get()) for i in ets]
-		qual_ind = wqi.q2_main(params)
-		tk.Label(tab2,text=qual_ind).grid(row=0,column=4)
-
+		qual_ind_vec = []
+		if csv_q2 is not None:
+			for i in range(len(csv_q2)) : 
+				# print(csv.iloc[i, 0], csv.iloc[i, 2]) 
+				pars = [csv_q2.iloc[i,j] for j in range(0, 13)]
+				qual_ind = wqi.q2_main(pars)
+				# tk.Label(tab1,text=qual_ind).grid(row=i,column=7)
+				qual_ind_vec.append(qual_ind)
+		
+			csv_q2["OIP"] = qual_ind_vec
+			outputfname = ets[-1].get()
+			csv_q2.to_csv(outputfname, index=False)
+		else:
+			tot = len(ets)-1
+			params = [float(i.get()) for i in ets[:tot-1]]
+			qual_ind = wqi.q2_main(params)
+			tk.Label(tab2,text=qual_ind).grid(row=0,column=4)
 
 	tk.Button(tab2, 
 			  text='Quit', 
-			  command=tab2.quit).grid(row=len(atts), 
+			  command=tab2.quit).grid(row=len(atts)+4, 
 										column=0, 
 										sticky=tk.W, 
 										pady=4)
 	tk.Button(tab2, 
-			  text='Show', command=show_entry_fields).grid(row=len(atts), 
+			  text='Show', command=show_entry_fields).grid(row=len(atts)+4, 
 														   column=1, 
 													   sticky=tk.W, 
 													   pady=4)
