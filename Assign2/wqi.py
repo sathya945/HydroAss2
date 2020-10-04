@@ -45,6 +45,8 @@ def q1(attr):
 
 
 def q2(attr):
+    # for i in attr:
+    print(attr)
     # assuming we take mean of existing attributes
     cnt=0
     param_vals = []
@@ -201,10 +203,12 @@ def q1_main(e1,e2,e3,e4,e5,e6):
         
 def q2_main(ets):
     params = {}
+    # print(ets[4:])
     # use the same atts array as in gui.py
     atts = ["Turbidity", "pH","Color","DO", "BOD","TDS", "Hardness","Cl","No3","So4","Coliform","As","F"]
 
-    for i in range(len(ets)):
-        params[atts[i]] = ets[i]
+    for i in range(4,len(ets)):
+        if ets[i]!='-':
+            params[atts[i-4]] = float(ets[i])
 
     return q2(params)
