@@ -8,14 +8,45 @@ def q1(attr):
     nitrates=0.10
     fecalcol =0.16
     # assuming we have q normalized values
-    print(attr["ph"],attr["temp"],attr["turb"],attr["tdv"],attr["nitrates"],attr["fecalcol"])
-    wqi = ph*attr["ph"]+temp*attr["temp"]+turb*attr["turb"]+tdv*attr["tdv"]+nitrates*attr["nitrates"]+fecalcol*attr["fecalcol"]
-    wqi = wqi/(ph+temp+turb+tdv+nitrates+fecalcol)
+    # print(attr["ph"],attr["temp"],attr["turb"],attr["tdv"],attr["nitrates"],attr["fecalcol"])
+
+    denom = 0
+    num = 0
+    if "ph" in attr:
+        num+= ph*attr["ph"]
+        denom+=ph
+    
+    if "turb" in attr:
+        num+= turb*attr["turb"]
+        denom+=turb
+    
+    if "tdv" in attr:
+        num+= tdv*attr["tdv"]
+        denom+=tdv
+    
+    if "nitrates" in attr:
+        num+= nitrates*attr["nitrates"]
+        denom+=nitrates
+    
+    if "temp" in attr:
+        num+= temp*attr["temp"]
+        denom+=temp
+    
+    if "fecalcol" in attr:
+        num+= fecalcol*attr["fecalcol"]
+        denom+=fecalcol
+    
+    if denom==0:
+        return -1
+    
+    wqi = num/denom
 
     return wqi
 
 
 def q2(attr):
+    # for i in attr:
+    print(attr)
     # assuming we take mean of existing attributes
     cnt=0
     param_vals = []
@@ -150,6 +181,8 @@ def q2(attr):
     wqi=0
     for i in param_vals:
         wqi+=i
+    if cnt==0:
+        return -1
     
     wqi/=cnt
 
@@ -170,10 +203,12 @@ def q1_main(e1,e2,e3,e4,e5,e6):
         
 def q2_main(ets):
     params = {}
+    # print(ets[4:])
     # use the same atts array as in gui.py
     atts = ["Turbidity", "pH","Color","DO", "BOD","TDS", "Hardness","Cl","No3","So4","Coliform","As","F"]
 
-    for i in range(len(ets)):
-        params[atts[i]] = ets[i]
+    for i in range(4,len(ets)):
+        if ets[i]!='-':
+            params[atts[i-4]] = float(ets[i])
 
     return q2(params)
